@@ -28,7 +28,7 @@
     ant build will build the tutorial jar
 -->
 
-<project name="tutorial2-app" default="build" basedir=".">
+<project name="bmunit-tutorial2-app" default="build" basedir=".">
     <target name="build" depends="clean, init, compile, jar">
     </target>
     <target name="clean">
@@ -45,17 +45,17 @@
         <javac srcdir="src/main/java" includes="**/*.java" destdir="target/classes" debug="true" target="1.6"/>
     </target>
     <target name="jar">
-        <jar destfile="target/tutorial2-app-1.0.0.jar">
+        <jar destfile="target/bmunit-tutorial2-app-1.0.0.jar">
             <fileset dir="target/classes" includes="**/*.class"/>
         </jar>
     </target>
     <target name="app">
-        <java classpath="target//tutorial2-app-1.0.0.jar" classname="org.my.app.PipelineAppMain1"/>
+        <java classpath="target//bmunit-tutorial2-app-1.0.0.jar" classname="org.my.app.PipelineAppMain" args="app/foo.txt app/bar.txt"/>
     </target>
     <target name="app2">
-        <java classpath="target//tutorial2-app-1.0.0.jar" classname="org.my.app.PipelineAppMain2"/>
+        <java classpath="target//bmunit-tutorial2-app-1.0.0.jar" classname="org.my.app.PipelineAppMain2"/>
     </target>
     <target name="app3">
-        <java classpath="target//tutorial2-app-1.0.0.jar" classname="org.my.app.PipelineAppMain3"/>
+        <java classpath="target//bmunit-tutorial2-app-1.0.0.jar" classname="org.my.app.PipelineAppMain3"/>
     </target>
 </project>

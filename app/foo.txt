@@ -7,7 +7,7 @@ Biography:
     leads JBoss project Byteman. He lives in sunny Newcastle Upon Tyne
     in the north of England where it is always T-shirt weather.
 Expertise:
-    Andrew has been writing system software for over 25 years, 10 of
+    Andrew has been writing system software for over 30 years, 10 of
     them in academic research, despite having no formal qualification
     in Computer Science. His areas of interest include virtual
     machines and compilers and transactional systems.

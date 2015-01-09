@@ -27,16 +27,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.my</groupId>
-    <artifactId>tutorial2-junit-tests</artifactId>
+    <artifactId>bmunit-tutorial2-junit-tests</artifactId>
     <packaging>jar</packaging>
     <description>
-        The 2nd byteman tutorial provides example of how to use Byteman to test an application
+        The 3rd byteman tutorial provides example of how to use BMUnit to perform
+        complex fault injection testing
     </description>
     <version>1.0.0</version>
-    <name>tutorial2-junit-tests</name>
+    <name>bmunit-tutorial2-junit-tests</name>
     <parent>
         <groupId>org.my</groupId>
-        <artifactId>tutorial2</artifactId>
+        <artifactId>bmunit-tutorial2</artifactId>
         <version>1.0.0</version>
     </parent>
     <build>
@@ -59,6 +60,10 @@
                     <includes>
                         <include>org/my/BytemanJUnitTests*.java</include>
                     </includes>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <useManifestOnlyJar>true</useManifestOnlyJar>
+                    <forkMode>once</forkMode>
+                    <parallel>false</parallel>
                     <!-- ensure we don't inherit a byteman jar form any env settings -->
                     <environmentVariables>
                         <BYTEMAN_HOME></BYTEMAN_HOME>
@@ -68,24 +73,7 @@
                             <name>org.jboss.byteman.home</name>
                             <value></value>
                         </property>
-                        <!--
-                        <property>
-                            <name>org.jboss.byteman.verbose</name>
-                            <value></value>
-                        </property>
-                        <property>
-                            <name>org.jboss.byteman.dump.generated.classes</name>
-                            <value></value>
-                        </property>
-                        -->
                     </systemProperties>
-                    <!-- make sure maven puts the byteman jar in the classpath rather than in a manifest jar -->
-                    <useManifestOnlyJar>false</useManifestOnlyJar>
-                    <forkMode>once</forkMode>
-                    <!--
-                    <debugForkedProcess>true</debugForkedProcess>
-                    -->
-                    <parallel>false</parallel>
                 </configuration>
             </plugin>
         </plugins>
@@ -131,13 +119,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.6</version>
-            <scope>system</scope>
-            <systemPath>${tools.jar}</systemPath>
-        </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+          <id>use-toolsjar-profile</id>
+          <activation>
+            <jdk>[1.6,1.8]</jdk>
+          </activation>
+          <dependencies>
+              <dependency>
+                  <groupId>com.sun</groupId>
+                  <artifactId>tools</artifactId>
+                  <version>1.6</version>
+                  <scope>system</scope>
+                  <systemPath>${tools.jar}</systemPath>
+              </dependency>
+          </dependencies>
+        </profile>
+    </profiles>
 </project>
 

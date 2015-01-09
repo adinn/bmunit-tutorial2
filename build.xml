@@ -39,11 +39,17 @@
 
 -->
 
-<project name="tutorial2" default="help" basedir=".">
+<project name="bmunit-tutorial2" default="help" basedir=".">
     <target name="help">
         <echo message="Welcome to the second Byteman tutorial"/>
         <echo message=""/>
         <echo message="ant build will build the tutorial2 jar"/>
+        <echo message=""/>
+        <echo message="ant app will run the first test app"/>
+        <echo message=""/>
+        <echo message="ant app2 will run the 2nd test app"/>
+        <echo message=""/>
+        <echo message="ant app3 will run the 3rd test app"/>
         <echo message=""/>
         <echo message="ant junit will test the sample app with junit using the simple"/>
         <echo message="tracing rules to trace test execution"/>
@@ -64,6 +70,15 @@
     </target>
     <target name="build">
         <ant dir="app"/>
+    </target>
+    <target name="app">
+        <ant dir="app" target="app"/>
+    </target>
+    <target name="app2">
+        <ant dir="app" target="app2"/>
+    </target>
+    <target name="app3">
+        <ant dir="app" target="app3"/>
     </target>
     <target name="junit">
         <ant dir="junit"/>

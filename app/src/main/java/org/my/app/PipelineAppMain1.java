@@ -94,8 +94,16 @@ public class PipelineAppMain1
     public static void main(String[] args)
     {
         try {
+            String infile = "foo.txt";
+            String outfile = "bar.txt";
+            if (args.length > 0) {
+                infile = args[0];
+            }
+            if (args.length > 1) {
+                outfile = args[1];
+            }
             // pipeline source reads file foo.txt
-            SourceProcessor reader = new FileSource("foo.txt");
+            SourceProcessor reader = new FileSource(infile);
             PipelineProcessor[] pipeline = new PipelineProcessor[5];
 
             // pipeline stage 0 replaces login name
@@ -114,7 +122,7 @@ public class PipelineAppMain1
             SinkProcessor writer2 = new FileSink("bar2.txt", pipeline[3]);
 
             // pipeline stage 4 writes the final output to filebar.txt
-            SinkProcessor writer3 = new FileSink("bar.txt", pipeline[4]);
+            SinkProcessor writer3 = new FileSink(outfile, pipeline[4]);
             // start all the stream processors
             reader.start();
             for(int i = 0; i <pipeline.length ;i++) {

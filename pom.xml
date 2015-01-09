@@ -27,22 +27,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.my</groupId>
-    <artifactId>tutorial2</artifactId>
+    <artifactId>bmunit-tutorial2</artifactId>
     <packaging>pom</packaging>
     <description>
         The 2nd byteman tutorial provides example of how to use Byteman to test an application
     </description>
     <version>1.0.0</version>
-    <name>tutorial2</name>
+    <name>bmunit-tutorial2</name>
     <properties>
         <tools.jar>${java.home}/../lib/tools.jar</tools.jar>
-        <byteman.version>2.1.4</byteman.version>
+        <byteman.version>2.2.1</byteman.version>
     </properties>
     <modules>
         <module>app</module>
     </modules>
     <!--
-        By default we just build the app code. We use two extra profiles to schedule building
+        By default we just build the app code. We use three extra profiles to schedule building
         of the junit or testng test modules
     -->
     <profiles>

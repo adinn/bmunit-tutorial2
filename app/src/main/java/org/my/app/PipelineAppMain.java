@@ -29,7 +29,6 @@ import org.my.pipeline.core.SinkProcessor;
 import org.my.pipeline.core.SourceProcessor;
 import org.my.pipeline.impl.FileSource;
 import org.my.pipeline.impl.FileSink;
-import org.my.pipeline.impl.PatternReplacer;
 import org.my.pipeline.impl.TraceProcessor;
 
 import java.io.IOException;
@@ -71,15 +70,23 @@ public class PipelineAppMain
     public static void main(String[] args)
     {
         try {
+            String infile = "foo.txt";
+            String outfile = "bar.txt";
+            if (args.length > 0) {
+                infile = args[0];
+            }
+            if (args.length > 1) {
+                outfile = args[1];
+            }
         	// create all the elements of the pipeline in order
         	// from start to finish
             // a file source streams file foo.txt into the pipeline
-            SourceProcessor fileSource = new FileSource("foo.txt");
+            SourceProcessor fileSource = new FileSource(infile);
             // a trace processor traces the data streamed through
             // the pipeline by the file source.
             PipelineProcessor tracer = new TraceProcessor("*** ", fileSource);
             //  a file sink streams the output to file bar.txt
-            SinkProcessor fileSink = new FileSink("bar.txt", tracer);
+            SinkProcessor fileSink = new FileSink(outfile, tracer);
             // start all the processors
             fileSource.start();
             tracer.start();
