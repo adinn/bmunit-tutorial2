@@ -25,6 +25,7 @@
 package org.my;
 
 import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMUnitConfig;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,13 +50,14 @@ import org.my.pipeline.impl.PatternReplacer;
  * being transformed and being collected at the end of the pipeline.
  */
 @RunWith(BMUnitRunner.class)
-@BMScript(value="trace", dir="target/test-classes")
+@BMUnitConfig(loadDirectory="target/test-classes")
+@BMScript(value="trace")
 public class BytemanJUnitTests
 {
     /**
      * a simple test of the pattern replacer functionality. we feed a String into the pipeline via a
-     * CharSequenceReader, transform it via a PatternReplacer and then retrieve the transformed String
-     * using a CharSequenceWriter. 
+     * CharSequenceSource, transform it via a PatternReplacer and then retrieve the transformed String
+     * using a CharSequenceSink.
      * @throws Exception
      */
     @Test
@@ -63,16 +65,16 @@ public class BytemanJUnitTests
     {
         System.out.println("testPipeLine:");
         String input = "hello world!\ngoodbye cruel world!\ngoodbye!\n";
-        CharSequenceSource reader = new CharSequenceSource(input);
-        PatternReplacer replacer = new PatternReplacer("world", "mum",reader);
-        CharSequenceSink writer = new CharSequenceSink(replacer);
-        reader.start();
+        CharSequenceSource cssource = new CharSequenceSource(input);
+        PatternReplacer replacer = new PatternReplacer("world", "mum",cssource);
+        CharSequenceSink cssink = new CharSequenceSink(replacer);
+        cssource.start();
         replacer.start();
-        writer.start();
-        reader.join();
+        cssink.start();
+        cssource.join();
         replacer.join();
-        writer.join();
-        String output = writer.toString();
+        cssink.join();
+        String output = cssink.toString();
         assert(output.equals("hello mum!\ngoodbye cruel mum!\ngoodbye!\n"));
     }
 

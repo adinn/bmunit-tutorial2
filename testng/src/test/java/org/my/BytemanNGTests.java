@@ -154,14 +154,14 @@ public class BytemanNGTests extends BMNGRunner
         buffer.append("a ${X1} broke a ${X4} with a ${X2}\n");
         // the third line reuses bindings [X1 ->"boy", X2 -> "stick"] and adds binding [X4 -> "window"]
         buffer.append("the boy threw the stick at the window\n");
-        CharSequenceSource reader = new CharSequenceSource(buffer);
-        Binder binder = new Binder("the ([A-Za-z]+)", "X", bindings, reader);
+        CharSequenceSource cssource = new CharSequenceSource(buffer);
+        Binder binder = new Binder("the ([A-Za-z]+)", "X", bindings, cssource);
         BindingReplacer replacer = new BindingReplacer(bindings, binder);
-        CharSequenceSink writer = new CharSequenceSink(replacer);
-        reader.start();
+        CharSequenceSink cssink = new CharSequenceSink(replacer);
+        cssource.start();
         binder.start();
         replacer.start();
-        writer.start();
+        cssink.start();
         // first we rendezvous with the binder to allow it to pass the trigger point where it
         // is just about to process the third line
         triggerRendezvous(binder);
@@ -176,11 +176,11 @@ public class BytemanNGTests extends BMNGRunner
         // now we rendezvous again with the replacer ensuring that it has completed processing
         // the second line. this means the reference to X4 should have been replaced
         triggerRendezvous(replacer);
-        reader.join();
+        cssource.join();
         binder.join();
         replacer.join();
-        writer.join();
-        String output = writer.toString();
+        cssink.join();
+        String output = cssink.toString();
         assert(output.equals("the boy threw the stick for the dog to catch\n" +
                             "a boy broke a window with a stick\n" +
                             "the boy threw the stick at the window\n"));
@@ -208,14 +208,14 @@ public class BytemanNGTests extends BMNGRunner
         buffer.append("a ${X1} broke a ${X4} with a ${X2}\n");
         // this third line reuses bindings [X1 ->"boy", X2 -> "stick"] and add binding [X4 -> "window"]
         buffer.append("the boy threw the stick at the window\n");
-        CharSequenceSource reader = new CharSequenceSource(buffer);
-        Binder binder = new Binder("the ([A-Za-z]+)", "X", bindings, reader);
+        CharSequenceSource cssource = new CharSequenceSource(buffer);
+        Binder binder = new Binder("the ([A-Za-z]+)", "X", bindings, cssource);
         BindingReplacer replacer = new BindingReplacer(bindings, binder);
-        CharSequenceSink writer = new CharSequenceSink(replacer);
-        reader.start();
+        CharSequenceSink cssink = new CharSequenceSink(replacer);
+        cssource.start();
         binder.start();
         replacer.start();
-        writer.start();
+        cssink.start();
         // first we rendezvous with the replacer to allow it to pass the trigger point where it
         // is just about to process the second line
         // note that the binder will still be wedged in its first rendezvous so it cannot
@@ -233,11 +233,11 @@ public class BytemanNGTests extends BMNGRunner
         // now we rendezvous again with the binder ensuring that it has completed processing
         // the third line. this means the binding for X4 will have been installed too late
         triggerRendezvous(binder);
-        reader.join();
+        cssource.join();
         binder.join();
         replacer.join();
-        writer.join();
-        String output = writer.toString();
+        cssink.join();
+        String output = cssink.toString();
         assert(output.equals("the boy threw the stick for the dog to catch\n" +
                             "a boy broke a ${X4} with a stick\n" +
                             "the boy threw the stick at the window\n"));

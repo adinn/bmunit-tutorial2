@@ -47,7 +47,7 @@ public class BytemanJUnitTests2
      * but it uses a Byteman rule to throw an IOException in the pattern replacer
      * before it can processes any text lines. The pattern replacer thread
      * should catch the exception, close its input and output streams and exit,
-     * causing the writer to finish with an empty output. All the pipeline
+     * causing the sink to finish with an empty output. All the pipeline
      * threads should exit cleanly.
      * 
      * The rule is presented using a BMRule annotation attached to this
@@ -78,22 +78,22 @@ public class BytemanJUnitTests2
         System.out.println("testErrorInPipeline:");
         StringBuffer buffer = new StringBuffer("hello world!");
         buffer.append(" goodbye cruel world!\n");
-        CharSequenceSource reader = new CharSequenceSource(buffer);
-        PatternReplacer replacer = new PatternReplacer("world", "mum",reader);
-        CharSequenceSink writer = new CharSequenceSink(replacer);
-        reader.start();
+        CharSequenceSource cssource = new CharSequenceSource(buffer);
+        PatternReplacer replacer = new PatternReplacer("world", "mum",cssource);
+        CharSequenceSink cssink = new CharSequenceSink(replacer);
+        cssource.start();
         replacer.start();
-        writer.start();
-        reader.join();
+        cssink.start();
+        cssource.join();
         replacer.join();
-        writer.join();
-        String output = writer.toString();
+        cssink.join();
+        String output = cssink.toString();
         assert(output.equals(""));
     }
 
     /**
      * This is a similar test to the previous one but it differs in
-     * two small respects. Firstly  the reader passes in many lines
+     * two small respects. Firstly  the source passes in many lines
      * of text, enough to fill the input pipeline to the pattern
      * replacer. Secondly, there are two rules, the first of which
      * creates a countDown used to control firing of the second.
@@ -123,7 +123,7 @@ public class BytemanJUnitTests2
      *
      * The pattern replacer should process two lines of text before the
      * exception is thrown. It should catch and print the exception,
-     * close its input and output streams and exit, causing the writer to
+     * close its input and output streams and exit, causing the sink to
      * finish with two lines of transformed output. The upstream thread
      * should also see an exception. It will either still be writing
      * text to its output or, more likely, it will be sitting on a full
@@ -158,16 +158,16 @@ public class BytemanJUnitTests2
         for (int i = 0; i < 40; i++) {
             buffer.append("goodbye! goodbye! goodbye!\n");
         }
-        CharSequenceSource reader = new CharSequenceSource(buffer);
-        PatternReplacer replacer = new PatternReplacer("world", "mum",reader);
-        CharSequenceSink writer = new CharSequenceSink(replacer);
-        reader.start();
+        CharSequenceSource cssource = new CharSequenceSource(buffer);
+        PatternReplacer replacer = new PatternReplacer("world", "mum",cssource);
+        CharSequenceSink cssink = new CharSequenceSink(replacer);
+        cssource.start();
         replacer.start();
-        writer.start();
-        reader.join();
+        cssink.start();
+        cssource.join();
         replacer.join();
-        writer.join();
-        String output = writer.toString();
+        cssink.join();
+        String output = cssink.toString();
         assert(output.equals("hello mum!\ngoodbye cruel mum!\n"));
     }
 }

@@ -66,7 +66,7 @@ public class TeeProcessor extends PipelineProcessor {
     public void processPipeline() throws IOException
     {
         if (output2 == null) {
-            throw new RuntimeException("unconnected tee");
+            throw new IOException("unconnected tee");
         }
 
         try {

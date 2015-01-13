@@ -14,7 +14,7 @@ Expertise:
 github Username:
     adinn 
 Git Author Names:
-    andrew dinn 
+    andrew dinn
 Home Address:
 
 Company name:
