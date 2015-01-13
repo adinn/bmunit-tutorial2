@@ -20,11 +20,11 @@ stream to ensure that upstream threads terminate. It also checks that
 they close downstream links so that downstream threads also
 terminate.
 
-The final part of the tutorial shows you how to inject synchronization
-operatins into parallel threads in order to force them to enter or
-avoid certain timing windows. These rules make it possible to confirm
-that there is potential for timing bugs to result in incorrect
-operation of the code under test.
+The final part of the tutorial shows you how to use Byteman to control
+and order operations occuring in different threads forcing either to
+enter or avoid certain timing windows. This makes it possible to
+confirm that the library under test is susceptible to certain types of
+timing bugs.
 
 A full explanation of how the application and tests operate with
 instructions on how to run both is provided in the tutorial at
