@@ -14,11 +14,17 @@ each of the processes (threads) in the pipeline.
 
 More complex tests engineer faults which exercise the fault handling
 capabilities of the application. These tests inject errors into a
-specific stag eof the processing pipeline. This is used to verify that
+specific stage of the processing pipeline. This is used to verify that
 the threads in the pipeline recursively propagate the error up the
 stream to ensure that upstream threads terminate. It also checks that
 they close downstream links so that downstream threads also
 terminate.
+
+The final part of the tutorial shows you how to inject synchronization
+operatins into parallel threads in order to force them to enter or
+avoid certain timing windows. These rules make it possible to confirm
+that there is potential for timing bugs to result in incorrect
+operation of the code under test.
 
 A full explanation of how the application and tests operate with
 instructions on how to run both is provided in the tutorial at
