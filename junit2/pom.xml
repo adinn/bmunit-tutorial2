@@ -81,7 +81,7 @@
     <dependencies>
         <dependency>
             <groupId>org.my</groupId>
-            <artifactId>tutorial2-app</artifactId>
+            <artifactId>bmunit-tutorial2-app</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
