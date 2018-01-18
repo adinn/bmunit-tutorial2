@@ -27,18 +27,10 @@
 #
 
 ########################################################################
-# A rule to create the rendezvous and counter for the Binder
-RULE create Binder rendezvous and counter
-CLASS Binder
-METHOD <init>
-IF TRUE
-DO createRendezvous($0, 2, true);
-   createCounter($0)
-ENDRULE
-
-# A rule to create the rendezvous and counter for the BindingReplacer
-RULE create BindingReplacer rendezvous and counter
-CLASS BindingReplacer
+# A rule to create the rendezvous and counter for
+# the Binder or BindingReplacer
+RULE create rendezvous and counter
+CLASS TextLineProcessor
 METHOD <init>
 IF TRUE
 DO createRendezvous($0, 2, true);

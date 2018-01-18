@@ -27,6 +27,7 @@ package org.my;
 import org.jboss.byteman.contrib.bmunit.BMRule;
 import org.jboss.byteman.contrib.bmunit.BMRules;
 import org.jboss.byteman.contrib.bmunit.BMScript;
+import org.jboss.byteman.contrib.bmunit.BMScripts;
 import org.jboss.byteman.contrib.bmunit.BMUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +40,8 @@ import org.my.pipeline.impl.PatternReplacer;
  * do tracing and fault injection
  */
 @RunWith(BMUnitRunner.class)
-@BMScript(value="trace", dir="target/test-classes")
+@BMScripts( scripts = {@BMScript(value="trace", dir="target/test-classes"),
+        @BMScript(value="validate", dir="target/test-classes") })
 public class BytemanJUnitTests2
 {
     /**
@@ -59,11 +61,24 @@ public class BytemanJUnitTests2
      * execution of the test method and the code is uninjected before the
      * next test is started. 
      * 
-     * There is a race here between the pattern replacer and the file source
+     * There is a race here between the pattern replacer and the text source
      * to close their respective input and output streams. The file source
      * will normally write all its data and close its output stream before the
-     * pattern replacer starts. The next test creates a situation where the
-     * file source will lose this race.
+     * pattern replacer starts. The outcome varies depending upon how that
+     * race proceeds.
+     *
+     * If the text source closes its stream first then there will be no further
+     * consequences when the pattern replacer closes its stream. However, if the
+     * pattern replacer closes its stream while the text source is still writing
+     * text then an IOException will be thrown from CharSequenceWriter.write.
+     *
+     * In the first test only two lines of text are written so we don't expect the
+     * IO exception to be generated. In the next test many lines are written,
+     * filling the output pipe and stalling the write operation. This creates
+     * a situation where the text source loses the race and an IOException is
+     * thrown.
+     *
+     * A rule
      * 
      * @throws Exception
      */
@@ -75,11 +90,15 @@ public class BytemanJUnitTests2
             action = "throw new java.io.IOException()")
     public void testErrorInPipeline() throws Exception
     {
+        // get Byteman to clear its internal flag
+        clearExceptionFlag();
+        // now run the test
         System.out.println("testErrorInPipeline:");
-        StringBuffer buffer = new StringBuffer("hello world!");
+        StringBuffer buffer = new StringBuffer("hello world!\n");
         buffer.append(" goodbye cruel world!\n");
+        buffer.append(" goodbye!\n");
         CharSequenceSource cssource = new CharSequenceSource(buffer);
-        PatternReplacer replacer = new PatternReplacer("world", "mum",cssource);
+        PatternReplacer replacer = new PatternReplacer("world", "mum", cssource);
         CharSequenceSink cssink = new CharSequenceSink(replacer);
         cssource.start();
         replacer.start();
@@ -89,6 +108,8 @@ public class BytemanJUnitTests2
         cssink.join();
         String output = cssink.toString();
         assert(output.equals(""));
+        // there should be no upstream exception
+        assert(checkExceptionFlag() == false);
     }
 
     /**
@@ -152,6 +173,9 @@ public class BytemanJUnitTests2
                     action = "throw new java.io.IOException()")})
     public void testErrorInFullPipeline() throws Exception
     {
+        // get Byteman to clear its internal flag
+        clearExceptionFlag();
+        // now run the test
         System.out.println("testErrorInFullPipeline:");
         StringBuffer buffer = new StringBuffer("hello world!\n");
         buffer.append("goodbye cruel world!\n");
@@ -169,5 +193,24 @@ public class BytemanJUnitTests2
         cssink.join();
         String output = cssink.toString();
         assert(output.equals("hello mum!\ngoodbye cruel mum!\n"));
+        // we should have seen an upstream exception
+        assert(checkExceptionFlag() == true);
+    }
+
+    /**
+     * test whether an IO exception occurred in the upstream pipeline source class;
+     */
+    private void clearExceptionFlag()
+    {
+        // let BYTEMAN inject the code to clear the flag
+    }
+    /**
+     * test whether an IO exception occurred in the upstream pipeline source class;
+     */
+    private boolean checkExceptionFlag()
+    {
+        // return false by default
+        // BYTEMAN will inject code to return true if the flag is set
+        return false;
     }
 }

@@ -150,7 +150,7 @@ public class BytemanNGTests extends BMNGRunner
         BindingMap bindings = new BindingMap();
         // this first line binds [X1 ->"boy", X2 -> "stick", X3 -> "dog"]
         StringBuffer buffer = new StringBuffer("the boy threw the stick for the dog to catch\n");
-        // this second line needs the bindings [X1 ->"boy", X2 -> "stick", X4 -> "dog"]
+        // this second line needs the bindings [X1 ->"boy", X2 -> "stick", X4 -> "window"]
         buffer.append("a ${X1} broke a ${X4} with a ${X2}\n");
         // the third line reuses bindings [X1 ->"boy", X2 -> "stick"] and adds binding [X4 -> "window"]
         buffer.append("the boy threw the stick at the window\n");

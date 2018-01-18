@@ -1,6 +1,6 @@
 #######################################################################
 # JBoss, Home of Professional Open Source
-# Copyright 2011, Red Hat and individual contributors as identified
+# Copyright 2015, Red Hat and individual contributors as identified
 # by the @authors tag. See the copyright.txt in the distribution for a
 # full listing of individual contributors.
 #
@@ -22,32 +22,40 @@
 # @authors Andrew Dinn
 #
 
-# A rule which dumps the text passed to a CharSequenceSource when it is created
-RULE trace input characters
-CLASS CharSequenceSource
-METHOD <init>(CharSequence)
+# A rule which tracks whether or not a pipe close
+# in the downstream process causes an IOException for
+# the upstream CharSequenceSource. If so a Byteman flag
+# labelled with the string "IOException occurred" is
+# set
+
+RULE flag IOException
+CLASS IOException
+METHOD <init>
 AT EXIT
-IF TRUE
-DO traceln("#INPUT\n" + $1.toString() + "#END")
+IF callerMatches("CharSequenceSource.produce", true, 3)
+DO traceStack("*** IO exception created here ***\n", 5);
+   traceln("***");
+   flag("IOException occurred")
 ENDRULE
 
-# A rule which dumps the text stored in a CharSequenceSink when it is retreived
-RULE trace output characters
-CLASS CharSequenceSink
-METHOD toString()
-AT EXIT
+# A rule injected into test code which allows it to
+# clear the Byteman flag labelled "IOException occurred"
+
+RULE clear IO Exception
+CLASS BytemanJUnitTests2
+METHOD clearExceptionFlag()
+AT ENTRY
 IF TRUE
-DO traceln("#OUTPUT\n" + $! + "#END")
+DO clear("IOException occurred")
 ENDRULE
 
-# A rule which traces replacements made by a PatternReplacer
-# if the returned line of text differs from the input line it
-# is dumped to System.out
+# A rule injected into test code which allows it to
+# test the Byteman flag labelled "IOException occurred"
 
-RULE dump pattern transformed text
-CLASS PatternReplacer
-METHOD transform(String)
-AT EXIT
-IF NOT $1.equals($!)
-DO traceln(" patternReplace(" + $1 + " -> " +$! +")")
+RULE check for IO Exception
+CLASS BytemanJUnitTests2
+METHOD checkExceptionFlag()
+AT ENTRY
+IF TRUE
+DO RETURN flagged("IOException occurred")
 ENDRULE
